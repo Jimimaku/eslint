@@ -1,6 +1,7 @@
 ---
 title: no-const-assign
 rule_type: problem
+handled_by_typescript: true
 ---
 
 
@@ -20,7 +21,6 @@ Examples of **incorrect** code for this rule:
 
 ```js
 /*eslint no-const-assign: "error"*/
-/*eslint-env es6*/
 
 const a = 0;
 a = 1;
@@ -32,7 +32,6 @@ a = 1;
 
 ```js
 /*eslint no-const-assign: "error"*/
-/*eslint-env es6*/
 
 const a = 0;
 a += 1;
@@ -44,7 +43,6 @@ a += 1;
 
 ```js
 /*eslint no-const-assign: "error"*/
-/*eslint-env es6*/
 
 const a = 0;
 ++a;
@@ -58,7 +56,6 @@ Examples of **correct** code for this rule:
 
 ```js
 /*eslint no-const-assign: "error"*/
-/*eslint-env es6*/
 
 const a = 0;
 console.log(a);
@@ -70,7 +67,6 @@ console.log(a);
 
 ```js
 /*eslint no-const-assign: "error"*/
-/*eslint-env es6*/
 
 for (const a in [1, 2, 3]) { // `a` is re-defined (not modified) on each loop step.
     console.log(a);
@@ -83,7 +79,6 @@ for (const a in [1, 2, 3]) { // `a` is re-defined (not modified) on each loop st
 
 ```js
 /*eslint no-const-assign: "error"*/
-/*eslint-env es6*/
 
 for (const a of [1, 2, 3]) { // `a` is re-defined (not modified) on each loop step.
     console.log(a);

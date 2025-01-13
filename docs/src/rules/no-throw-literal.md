@@ -19,7 +19,6 @@ Examples of **incorrect** code for this rule:
 
 ```js
 /*eslint no-throw-literal: "error"*/
-/*eslint-env es6*/
 
 throw "error";
 
@@ -84,10 +83,10 @@ throw foo("error");
 
 throw new String("error");
 
-var foo = {
+var baz = {
     bar: "error"
 };
-throw foo.bar;
+throw baz.bar;
 ```
 
 :::

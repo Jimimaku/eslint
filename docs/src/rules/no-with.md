@@ -17,7 +17,7 @@ If ESLint parses code in strict mode, the parser (instead of this rule) reports 
 
 Examples of **incorrect** code for this rule:
 
-::: incorrect
+::: incorrect { "sourceType": "script" }
 
 ```js
 /*eslint no-with: "error"*/
@@ -31,11 +31,10 @@ with (point) {
 
 Examples of **correct** code for this rule:
 
-::: correct
+::: correct { "sourceType": "script" }
 
 ```js
 /*eslint no-with: "error"*/
-/*eslint-env es6*/
 
 const r = ({x, y}) => Math.sqrt(x * x + y * y);
 ```

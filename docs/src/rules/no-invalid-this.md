@@ -1,6 +1,8 @@
 ---
 title: no-invalid-this
 rule_type: suggestion
+handled_by_typescript: true
+extra_typescript_info: Note that, technically, TypeScript will only catch this if you have the `strict` or `noImplicitThis` flags enabled. These are enabled in most TypeScript projects, since they are considered to be best practice.
 ---
 
 
@@ -47,11 +49,10 @@ With `"parserOptions": { "sourceType": "module" }` in the ESLint configuration, 
 
 Examples of **incorrect** code for this rule in strict mode:
 
-::: incorrect
+::: incorrect { "sourceType": "script" }
 
 ```js
 /*eslint no-invalid-this: "error"*/
-/*eslint-env es6*/
 
 "use strict";
 
@@ -95,11 +96,10 @@ foo.forEach(function() {
 
 Examples of **correct** code for this rule in strict mode:
 
-::: correct
+::: correct { "sourceType": "script" }
 
 ```js
 /*eslint no-invalid-this: "error"*/
-/*eslint-env es6*/
 
 "use strict";
 
@@ -112,7 +112,7 @@ function Foo() {
     baz(() => this);
 }
 
-class Foo {
+class Bar {
     constructor() {
         // OK, this is in a constructor.
         this.a = 0;
@@ -180,7 +180,7 @@ Foo.prototype.foo = function foo() {
     this.a = 0;
 };
 
-class Foo {
+class Baz {
 
     // OK, this is in a class field initializer.
     a = this.b;
@@ -241,7 +241,7 @@ Set `"capIsConstructor"` to `false` if you want those functions to be treated as
 
 Examples of **incorrect** code for this rule with `"capIsConstructor"` option set to `false`:
 
-::: incorrect
+::: incorrect { "sourceType": "script" }
 
 ```js
 /*eslint no-invalid-this: ["error", { "capIsConstructor": false }]*/
@@ -269,7 +269,7 @@ Baz = function() {
 
 Examples of **correct** code for this rule with `"capIsConstructor"` option set to `false`:
 
-::: correct
+::: correct { "sourceType": "script" }
 
 ```js
 /*eslint no-invalid-this: ["error", { "capIsConstructor": false }]*/

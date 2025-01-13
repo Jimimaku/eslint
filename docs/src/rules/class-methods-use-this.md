@@ -50,7 +50,7 @@ class A {
 A.sayHi(); // => "hi"
 ```
 
-Also note in the above examples that if you switch a method to a static method, *instances* of the class that call the static method (`let a = new A(); a.sayHi();`) have to be updated to being a static call (`A.sayHi();`) instead of having the instance of the *class* call the method
+Also note in the above examples that if you switch a method to a static method, *instances* of the class that call the static method (`let a = new A(); a.sayHi();`) have to be updated to being a static call (`A.sayHi();`) instead of having the instance of the *class* call the method.
 
 ## Rule Details
 
@@ -62,7 +62,6 @@ Examples of **incorrect** code for this rule:
 
 ```js
 /*eslint class-methods-use-this: "error"*/
-/*eslint-env es6*/
 
 class A {
     foo() {
@@ -79,20 +78,20 @@ Examples of **correct** code for this rule:
 
 ```js
 /*eslint class-methods-use-this: "error"*/
-/*eslint-env es6*/
+
 class A {
     foo() {
         this.bar = "Hello World"; // OK, this is used
     }
 }
 
-class A {
+class B {
     constructor() {
         // OK. constructor is exempt
     }
 }
 
-class A {
+class C {
     static foo() {
         // OK. static methods aren't expected to use this.
     }
@@ -118,9 +117,9 @@ This rule has two options:
 "class-methods-use-this": [<enabled>, { "exceptMethods": [<...exceptions>] }]
 ```
 
-The `exceptMethods` option allows you to pass an array of method names for which you would like to ignore warnings. For example, you might have a spec from an external library that requires you to overwrite a method as a regular function (and not as a static method) and does not use `this` inside the function body. In this case, you can add that method to ignore in the warnings.
+The `"exceptMethods"` option allows you to pass an array of method names for which you would like to ignore warnings. For example, you might have a spec from an external library that requires you to overwrite a method as a regular function (and not as a static method) and does not use `this` inside the function body. In this case, you can add that method to ignore in the warnings.
 
-Examples of **incorrect** code for this rule when used without exceptMethods:
+Examples of **incorrect** code for this rule when used without `"exceptMethods"`:
 
 ::: incorrect
 

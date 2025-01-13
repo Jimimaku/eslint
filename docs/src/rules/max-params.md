@@ -40,13 +40,12 @@ Examples of **incorrect** code for this rule with the default `{ "max": 3 }` opt
 
 ```js
 /*eslint max-params: ["error", 3]*/
-/*eslint-env es6*/
 
-function foo (bar, baz, qux, qxx) {
+function foo1 (bar, baz, qux, qxx) {
     doSomething();
 }
 
-let foo = (bar, baz, qux, qxx) => {
+let foo2 = (bar, baz, qux, qxx) => {
     doSomething();
 };
 ```
@@ -59,13 +58,12 @@ Examples of **correct** code for this rule with the default `{ "max": 3 }` optio
 
 ```js
 /*eslint max-params: ["error", 3]*/
-/*eslint-env es6*/
 
-function foo (bar, baz, qux) {
+function foo1 (bar, baz, qux) {
     doSomething();
 }
 
-let foo = (bar, baz, qux) => {
+let foo2 = (bar, baz, qux) => {
     doSomething();
 };
 ```

@@ -3,7 +3,7 @@ title: indent
 rule_type: layout
 ---
 
-
+This rule was **deprecated** in ESLint v8.53.0. Please use the [corresponding rule](https://eslint.style/rules/js/indent) in [`@stylistic/eslint-plugin-js`](https://eslint.style/packages/js).
 
 There are several common guidelines which require specific indentation of nested blocks and statements, like:
 
@@ -81,7 +81,7 @@ if (a) {
 
 This rule has an object option:
 
-* `"ignoredNodes"` can be used to disable indentation checking for any AST node. This accepts an array of [selectors](../developer-guide/selectors). If an AST node is matched by any of the selectors, the indentation of tokens which are direct children of that node will be ignored. This can be used as an escape hatch to relax the rule if you disagree with the indentation that it enforces for a particular syntactic pattern.
+* `"ignoredNodes"` can be used to disable indentation checking for any AST node. This accepts an array of [selectors](../extend/selectors). If an AST node is matched by any of the selectors, the indentation of tokens which are direct children of that node will be ignored. This can be used as an escape hatch to relax the rule if you disagree with the indentation that it enforces for a particular syntactic pattern.
 * `"SwitchCase"` (default: 0) enforces indentation level for `case` clauses in `switch` statements
 * `"VariableDeclarator"` (default: 1) enforces indentation level for `var` declarators; can also take an object to define separate rules for `var`, `let` and `const` declarations. It can also be `"first"`, indicating all the declarators should be aligned with the first declarator.
 * `"outerIIFEBody"` (default: 1) enforces indentation level for file-level IIFEs. This can also be set to `"off"` to disable checking for file-level IIFEs.
@@ -141,20 +141,23 @@ function foo(d) {
 
 Examples of **correct** code for this rule with the `"tab"` option:
 
+<!-- markdownlint-capture -->
+<!-- markdownlint-disable MD010 -->
 ::: correct
 
 ```js
 /*eslint indent: ["error", "tab"]*/
 
 if (a) {
-/*tab*/b=c;
-/*tab*/function foo(d) {
-/*tab*//*tab*/e=f;
-/*tab*/}
+	b=c;
+	function foo(d) {
+		e=f;
+	}
 }
 ```
 
 :::
+<!-- markdownlint-restore -->
 
 ### ignoredNodes
 
@@ -192,7 +195,7 @@ Examples of **correct** code for this rule with the `4, { "ignoredNodes": ["Call
 foo();
 bar();
 
-})
+})();
 ```
 
 :::
@@ -243,17 +246,16 @@ Examples of **incorrect** code for this rule with the `2, { "VariableDeclarator"
 
 ```js
 /*eslint indent: ["error", 2, { "VariableDeclarator": 1 }]*/
-/*eslint-env es6*/
 
 var a,
     b,
     c;
-let a,
-    b,
-    c;
-const a = 1,
-    b = 2,
-    c = 3;
+let d,
+    e,
+    f;
+const g = 1,
+    h = 2,
+    i = 3;
 ```
 
 :::
@@ -264,17 +266,16 @@ Examples of **correct** code for this rule with the `2, { "VariableDeclarator": 
 
 ```js
 /*eslint indent: ["error", 2, { "VariableDeclarator": 1 }]*/
-/*eslint-env es6*/
 
 var a,
   b,
   c;
-let a,
-  b,
-  c;
-const a = 1,
-  b = 2,
-  c = 3;
+let d,
+  e,
+  f;
+const g = 1,
+  h = 2,
+  i = 3;
 ```
 
 :::
@@ -285,17 +286,16 @@ Examples of **correct** code for this rule with the `2, { "VariableDeclarator": 
 
 ```js
 /*eslint indent: ["error", 2, { "VariableDeclarator": 2 }]*/
-/*eslint-env es6*/
 
 var a,
     b,
     c;
-let a,
-    b,
-    c;
-const a = 1,
-    b = 2,
-    c = 3;
+let d,
+    e,
+    f;
+const g = 1,
+    h = 2,
+    i = 3;
 ```
 
 :::
@@ -306,17 +306,16 @@ Examples of **incorrect** code for this rule with the `2, { "VariableDeclarator"
 
 ```js
 /*eslint indent: ["error", 2, { "VariableDeclarator": "first" }]*/
-/*eslint-env es6*/
 
 var a,
   b,
   c;
-let a,
-  b,
-  c;
-const a = 1,
-  b = 2,
-  c = 3;
+let d,
+  e,
+  f;
+const g = 1,
+  h = 2,
+  i = 3;
 ```
 
 :::
@@ -327,17 +326,16 @@ Examples of **correct** code for this rule with the `2, { "VariableDeclarator": 
 
 ```js
 /*eslint indent: ["error", 2, { "VariableDeclarator": "first" }]*/
-/*eslint-env es6*/
 
 var a,
     b,
     c;
-let a,
-    b,
-    c;
-const a = 1,
-      b = 2,
-      c = 3;
+let d,
+    e,
+    f;
+const g = 1,
+      h = 2,
+      i = 3;
 ```
 
 :::
@@ -348,17 +346,16 @@ Examples of **correct** code for this rule with the `2, { "VariableDeclarator": 
 
 ```js
 /*eslint indent: ["error", 2, { "VariableDeclarator": { "var": 2, "let": 2, "const": 3 } }]*/
-/*eslint-env es6*/
 
 var a,
     b,
     c;
-let a,
-    b,
-    c;
-const a = 1,
-      b = 2,
-      c = 3;
+let d,
+    e,
+    f;
+const g = 1,
+      h = 2,
+      i = 3;
 ```
 
 :::
@@ -403,7 +400,7 @@ function foo(x) {
 })();
 
 if (y) {
-   console.log('foo');
+  console.log('foo');
 }
 ```
 
@@ -858,6 +855,14 @@ import { foo,
     bar,
     baz,
 } from 'qux';
+```
+
+:::
+
+::: correct
+
+```js
+/*eslint indent: ["error", 4, { "ImportDeclaration": 1 }]*/
 
 import {
     foo,

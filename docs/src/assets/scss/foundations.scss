@@ -10,6 +10,7 @@ h4:target,
 h5:target,
 h6:target {
     background-color: var(--lighter-background-color);
+    border-radius: var(--border-radius);
 }
 
 *:focus {
@@ -62,6 +63,7 @@ html {
 }
 
 body {
+    font-size: var(--step-0);
     position: relative;
     margin: 0 auto;
     line-height: 1.5;
@@ -169,11 +171,6 @@ code {
     pre & {
         color: unset;
     }
-}
-
-p:empty {
-    display: none;
-    margin: 0;
 }
 
 .c-icon {
@@ -346,10 +343,6 @@ nav {
 }
 
 /* typography */
-body {
-    font-size: var(--step-0);
-    line-height: 1.5;
-}
 
 .eyebrow {
     color: var(--link-color);
@@ -371,6 +364,7 @@ h6 {
     font-weight: 500;
     margin-top: 0;
     margin-block-start: 0;
+    padding: 0.25rem 0;
 }
 
 h2,

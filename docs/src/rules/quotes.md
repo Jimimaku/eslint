@@ -3,25 +3,25 @@ title: quotes
 rule_type: layout
 ---
 
-
+This rule was **deprecated** in ESLint v8.53.0. Please use the [corresponding rule](https://eslint.style/rules/js/quotes) in [`@stylistic/eslint-plugin-js`](https://eslint.style/packages/js).
 
 JavaScript allows you to define strings in one of three ways: double quotes, single quotes, and backticks (as of ECMAScript 6). For example:
 
 ```js
-/*eslint-env es6*/
-
 var double = "double";
 var single = 'single';
 var backtick = `backtick`;    // ES6 only
 ```
 
-Each of these lines creates a string and, in some cases, can be used interchangeably. The choice of how to define strings in a codebase is a stylistic one outside of template literals (which allow embedded of expressions to be interpreted).
+Each of these lines creates a string and, in some cases, can be used interchangeably. The choice of how to define strings in a codebase is a stylistic one outside of template literals (which allow embedded expressions to be interpreted).
 
 Many codebases require strings to be defined in a consistent manner.
 
 ## Rule Details
 
 This rule enforces the consistent use of either backticks, double, or single quotes.
+
+This rule is aware of directive prologues such as `"use strict"` and will not flag or autofix them if doing so will change how the directive prologue is interpreted.
 
 ## Options
 
@@ -62,7 +62,6 @@ Examples of **correct** code for this rule with the default `"double"` option:
 
 ```js
 /*eslint quotes: ["error", "double"]*/
-/*eslint-env es6*/
 
 var double = "double";
 var backtick = `back
@@ -93,7 +92,6 @@ Examples of **correct** code for this rule with the `"single"` option:
 
 ```js
 /*eslint quotes: ["error", "single"]*/
-/*eslint-env es6*/
 
 var single = 'single';
 var backtick = `back${x}tick`; // backticks are allowed due to substitution
@@ -123,9 +121,10 @@ Examples of **correct** code for this rule with the `"backtick"` option:
 
 ```js
 /*eslint quotes: ["error", "backtick"]*/
-/*eslint-env es6*/
 
+"use strict"; // directives must use single or double quotes
 var backtick = `backtick`;
+var obj = { 'prop-name': `value` }; // backticks not allowed for property names
 ```
 
 :::

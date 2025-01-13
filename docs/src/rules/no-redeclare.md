@@ -1,6 +1,8 @@
 ---
 title: no-redeclare
 rule_type: suggestion
+handled_by_typescript: true
+extra_typescript_info: Note that while TypeScript will catch `let` redeclares and `const` redeclares, it will not catch `var` redeclares. Thus, if you use the legacy `var` keyword in your TypeScript codebase, this rule will still provide some value.
 related_rules:
 - no-shadow
 ---
@@ -75,7 +77,7 @@ The `"builtinGlobals"` option will check for redeclaration of built-in globals i
 
 Examples of **incorrect** code for the `{ "builtinGlobals": true }` option:
 
-::: incorrect
+::: incorrect { "sourceType": "script" }
 
 ```js
 /*eslint no-redeclare: ["error", { "builtinGlobals": true }]*/
@@ -85,19 +87,4 @@ var Object = 0;
 
 :::
 
-Examples of **incorrect** code for the `{ "builtinGlobals": true }` option and the `browser` environment:
-
-::: incorrect
-
-```js
-/*eslint no-redeclare: ["error", { "builtinGlobals": true }]*/
-/*eslint-env browser*/
-
-var top = 0;
-```
-
-:::
-
-The `browser` environment has many built-in global variables (for example, `top`). Some of built-in global variables cannot be redeclared.
-
-Note that when using the `node` or `commonjs` environments (or `ecmaFeatures.globalReturn`, if using the default parser), the top scope of a program is not actually the global scope, but rather a "module" scope. When this is the case, declaring a variable named after a builtin global is not a redeclaration, but rather a shadowing of the global variable. In that case, the [`no-shadow`](no-shadow) rule with the `"builtinGlobals"` option should be used.
+Note that when using `sourceType: "commonjs"` (or `ecmaFeatures.globalReturn`, if using the default parser), the top scope of a program is not actually the global scope, but rather a "module" scope. When this is the case, declaring a variable named after a builtin global is not a redeclaration, but rather a shadowing of the global variable. In that case, the [`no-shadow`](no-shadow) rule with the `"builtinGlobals"` option should be used.

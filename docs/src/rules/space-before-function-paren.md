@@ -2,11 +2,10 @@
 title: space-before-function-paren
 rule_type: layout
 related_rules:
-- space-after-keywords
-- space-return-throw-case
+- keyword-spacing
 ---
 
-
+This rule was **deprecated** in ESLint v8.53.0. Please use the [corresponding rule](https://eslint.style/rules/js/space-before-function-paren) in [`@stylistic/eslint-plugin-js`](https://eslint.style/packages/js).
 
 When formatting a function, whitespace is allowed between the function name or `function` keyword and the opening paren. Named functions also require a space between the `function` keyword and the function name, but anonymous functions require no whitespace. For example:
 
@@ -66,7 +65,6 @@ Examples of **incorrect** code for this rule with the default `"always"` option:
 
 ```js
 /*eslint space-before-function-paren: "error"*/
-/*eslint-env es6*/
 
 function foo() {
     // ...
@@ -86,13 +84,13 @@ class Foo {
     }
 }
 
-var foo = {
+var baz = {
     bar() {
         // ...
     }
 };
 
-var foo = async() => 1
+var baz = async() => 1
 ```
 
 :::
@@ -103,7 +101,6 @@ Examples of **correct** code for this rule with the default `"always"` option:
 
 ```js
 /*eslint space-before-function-paren: "error"*/
-/*eslint-env es6*/
 
 function foo () {
     // ...
@@ -123,13 +120,13 @@ class Foo {
     }
 }
 
-var foo = {
+var baz = {
     bar () {
         // ...
     }
 };
 
-var foo = async () => 1
+var baz = async () => 1
 ```
 
 :::
@@ -142,7 +139,6 @@ Examples of **incorrect** code for this rule with the `"never"` option:
 
 ```js
 /*eslint space-before-function-paren: ["error", "never"]*/
-/*eslint-env es6*/
 
 function foo () {
     // ...
@@ -162,13 +158,13 @@ class Foo {
     }
 }
 
-var foo = {
+var baz = {
     bar () {
         // ...
     }
 };
 
-var foo = async () => 1
+var baz = async () => 1
 ```
 
 :::
@@ -179,7 +175,6 @@ Examples of **correct** code for this rule with the `"never"` option:
 
 ```js
 /*eslint space-before-function-paren: ["error", "never"]*/
-/*eslint-env es6*/
 
 function foo() {
     // ...
@@ -199,13 +194,13 @@ class Foo {
     }
 }
 
-var foo = {
+var baz = {
     bar() {
         // ...
     }
 };
 
-var foo = async() => 1
+var baz = async() => 1
 ```
 
 :::
@@ -218,7 +213,6 @@ Examples of **incorrect** code for this rule with the `{"anonymous": "always", "
 
 ```js
 /*eslint space-before-function-paren: ["error", {"anonymous": "always", "named": "never", "asyncArrow": "always"}]*/
-/*eslint-env es6*/
 
 function foo () {
     // ...
@@ -234,13 +228,13 @@ class Foo {
     }
 }
 
-var foo = {
+var baz = {
     bar () {
         // ...
     }
 };
 
-var foo = async(a) => await a
+var baz = async(a) => await a
 ```
 
 :::
@@ -251,7 +245,6 @@ Examples of **correct** code for this rule with the `{"anonymous": "always", "na
 
 ```js
 /*eslint space-before-function-paren: ["error", {"anonymous": "always", "named": "never", "asyncArrow": "always"}]*/
-/*eslint-env es6*/
 
 function foo() {
     // ...
@@ -267,13 +260,13 @@ class Foo {
     }
 }
 
-var foo = {
+var baz = {
     bar() {
         // ...
     }
 };
 
-var foo = async (a) => await a
+var baz = async (a) => await a
 ```
 
 :::
@@ -286,7 +279,6 @@ Examples of **incorrect** code for this rule with the `{"anonymous": "never", "n
 
 ```js
 /*eslint space-before-function-paren: ["error", { "anonymous": "never", "named": "always" }]*/
-/*eslint-env es6*/
 
 function foo() {
     // ...
@@ -302,7 +294,7 @@ class Foo {
     }
 }
 
-var foo = {
+var baz = {
     bar() {
         // ...
     }
@@ -317,7 +309,6 @@ Examples of **correct** code for this rule with the `{"anonymous": "never", "nam
 
 ```js
 /*eslint space-before-function-paren: ["error", { "anonymous": "never", "named": "always" }]*/
-/*eslint-env es6*/
 
 function foo () {
     // ...
@@ -333,7 +324,7 @@ class Foo {
     }
 }
 
-var foo = {
+var baz = {
     bar () {
         // ...
     }
@@ -350,7 +341,6 @@ Examples of **incorrect** code for this rule with the `{"anonymous": "ignore", "
 
 ```js
 /*eslint space-before-function-paren: ["error", { "anonymous": "ignore", "named": "always" }]*/
-/*eslint-env es6*/
 
 function foo() {
     // ...
@@ -362,7 +352,7 @@ class Foo {
     }
 }
 
-var foo = {
+var baz = {
     bar() {
         // ...
     }
@@ -377,7 +367,6 @@ Examples of **correct** code for this rule with the `{"anonymous": "ignore", "na
 
 ```js
 /*eslint space-before-function-paren: ["error", { "anonymous": "ignore", "named": "always" }]*/
-/*eslint-env es6*/
 
 var bar = function() {
     // ...
@@ -397,7 +386,7 @@ class Foo {
     }
 }
 
-var foo = {
+var baz = {
     bar () {
         // ...
     }

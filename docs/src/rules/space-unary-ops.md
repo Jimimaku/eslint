@@ -3,7 +3,7 @@ title: space-unary-ops
 rule_type: layout
 ---
 
-
+This rule was **deprecated** in ESLint v8.53.0. Please use the [corresponding rule](https://eslint.style/rules/js/space-unary-ops) in [`@stylistic/eslint-plugin-js`](https://eslint.style/packages/js).
 
 Some style guides require or disallow spaces before or after unary operators. This is mainly a stylistic issue, however, some JavaScript expressions can be written without spacing which makes it harder to read and maintain.
 
@@ -96,7 +96,6 @@ foo --;
 
 ```js
 /*eslint space-unary-ops: "error"*/
-/*eslint-env es6*/
 
 function *foo() {
     yield(0)
@@ -155,7 +154,6 @@ foo--;
 
 ```js
 /*eslint space-unary-ops: "error"*/
-/*eslint-env es6*/
 
 function *foo() {
     yield (0)

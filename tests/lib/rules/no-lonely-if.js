@@ -9,7 +9,7 @@
 //------------------------------------------------------------------------------
 
 const rule = require("../../../lib/rules/no-lonely-if"),
-    { RuleTester } = require("../../../lib/rule-tester");
+    RuleTester = require("../../../lib/rule-tester/rule-tester");
 
 //------------------------------------------------------------------------------
 // Tests
@@ -23,7 +23,8 @@ ruleTester.run("no-lonely-if", rule, {
     // Examples of code that should not trigger the rule
     valid: [
         "if (a) {;} else if (b) {;}",
-        "if (a) {;} else { if (b) {;} ; }"
+        "if (a) {;} else { if (b) {;} ; }",
+        "if (a) if (a) {} else { if (b) {} } else {}"
     ],
 
     // Examples of code that should trigger the rule
@@ -177,7 +178,7 @@ ruleTester.run("no-lonely-if", rule, {
             "}\n" +
             "`template literal`;",
             output: null,
-            parserOptions: { ecmaVersion: 6 },
+            languageOptions: { ecmaVersion: 6 },
             errors
         },
         {

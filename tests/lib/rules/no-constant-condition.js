@@ -10,13 +10,13 @@
 //------------------------------------------------------------------------------
 
 const rule = require("../../../lib/rules/no-constant-condition"),
-    { RuleTester } = require("../../../lib/rule-tester");
+    RuleTester = require("../../../lib/rule-tester/rule-tester");
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
-const ruleTester = new RuleTester({ parserOptions: { ecmaVersion: 2021 } });
+const ruleTester = new RuleTester({ languageOptions: { ecmaVersion: 2021 } });
 
 ruleTester.run("no-constant-condition", rule, {
     valid: [
@@ -141,15 +141,15 @@ ruleTester.run("no-constant-condition", rule, {
         "if ((foo || 'bar' || 'bar') === 'bar');",
         {
             code: "if ((foo || 1n) === 'baz') {}",
-            parserOptions: { ecmaVersion: 11 }
+            languageOptions: { ecmaVersion: 11 }
         },
         {
             code: "if (a && 0n || b);",
-            parserOptions: { ecmaVersion: 11 }
+            languageOptions: { ecmaVersion: 11 }
         },
         {
             code: "if(1n && a){};",
-            parserOptions: { ecmaVersion: 11 }
+            languageOptions: { ecmaVersion: 11 }
         },
 
         // #12225
@@ -165,6 +165,20 @@ ruleTester.run("no-constant-condition", rule, {
         { code: "while(true);", options: [{ checkLoops: false }] },
         { code: "for(;true;);", options: [{ checkLoops: false }] },
         { code: "do{}while(true)", options: [{ checkLoops: false }] },
+
+        // { checkLoops: "none" }
+        { code: "while(true);", options: [{ checkLoops: "none" }] },
+        { code: "for(;true;);", options: [{ checkLoops: "none" }] },
+        { code: "do{}while(true)", options: [{ checkLoops: "none" }] },
+
+        // { checkloops: "allExceptWhileTrue" }
+        { code: "while(true);", options: [{ checkLoops: "allExceptWhileTrue" }] },
+        "while(true);",
+
+        // { checkloops: "all" }
+        { code: "while(a == b);", options: [{ checkLoops: "all" }] },
+        { code: "do{ }while(x);", options: [{ checkLoops: "all" }] },
+        { code: "for (let x = 0; x <= 10; x++) {};", options: [{ checkLoops: "all" }] },
 
         "function* foo(){while(true){yield 'foo';}}",
         "function* foo(){for(;true;){yield 'foo';}}",
@@ -193,9 +207,9 @@ ruleTester.run("no-constant-condition", rule, {
         "if (foo.Boolean(1)) {}",
         "function foo(Boolean) { if (Boolean(1)) {} }",
         "const Boolean = () => {}; if (Boolean(1)) {}",
-        { code: "if (Boolean()) {}", globals: { Boolean: "off" } },
+        { code: "if (Boolean()) {}", languageOptions: { globals: { Boolean: "off" } } },
         "const undefined = 'lol'; if (undefined) {}",
-        { code: "if (undefined) {}", globals: { undefined: "off" } }
+        { code: "if (undefined) {}", languageOptions: { globals: { undefined: "off" } } }
     ],
     invalid: [
         { code: "for(;true;);", errors: [{ messageId: "unexpected", type: "Literal" }] },
@@ -272,7 +286,7 @@ ruleTester.run("no-constant-condition", rule, {
         { code: "while(~!0);", errors: [{ messageId: "unexpected", type: "UnaryExpression" }] },
         { code: "while(x = 1);", errors: [{ messageId: "unexpected", type: "AssignmentExpression" }] },
         { code: "while(function(){});", errors: [{ messageId: "unexpected", type: "FunctionExpression" }] },
-        { code: "while(true);", errors: [{ messageId: "unexpected", type: "Literal" }] },
+        { code: "while(true);", options: [{ checkLoops: "all" }], errors: [{ messageId: "unexpected", type: "Literal" }] },
         { code: "while(1);", errors: [{ messageId: "unexpected", type: "Literal" }] },
         { code: "while(() => {});", errors: [{ messageId: "unexpected", type: "ArrowFunctionExpression" }] },
         { code: "while(`foo`);", errors: [{ messageId: "unexpected", type: "TemplateLiteral" }] },
@@ -314,24 +328,58 @@ ruleTester.run("no-constant-condition", rule, {
         { code: "if(abc==='str' || 'str'){}", errors: [{ messageId: "unexpected", type: "LogicalExpression" }] },
         { code: "if(a || 'str'){}", errors: [{ messageId: "unexpected", type: "LogicalExpression" }] },
 
+        { code: "while(x = 1);", options: [{ checkLoops: "all" }], errors: [{ messageId: "unexpected", type: "AssignmentExpression" }] },
+        { code: "do{ }while(x = 1)", options: [{ checkLoops: "all" }], errors: [{ messageId: "unexpected", type: "AssignmentExpression" }] },
+        { code: "for (;true;) {};", options: [{ checkLoops: "all" }], errors: [{ messageId: "unexpected", type: "Literal" }] },
+
         {
             code: "function* foo(){while(true){} yield 'foo';}",
+            options: [{ checkLoops: "all" }],
+            errors: [{ messageId: "unexpected", type: "Literal" }]
+        },
+        {
+            code: "function* foo(){while(true){} yield 'foo';}",
+            options: [{ checkLoops: true }],
             errors: [{ messageId: "unexpected", type: "Literal" }]
         },
         {
             code: "function* foo(){while(true){if (true) {yield 'foo';}}}",
+            options: [{ checkLoops: "all" }],
+            errors: [{ messageId: "unexpected", type: "Literal" }]
+        },
+        {
+            code: "function* foo(){while(true){if (true) {yield 'foo';}}}",
+            options: [{ checkLoops: true }],
             errors: [{ messageId: "unexpected", type: "Literal" }]
         },
         {
             code: "function* foo(){while(true){yield 'foo';} while(true) {}}",
+            options: [{ checkLoops: "all" }],
+            errors: [{ messageId: "unexpected", type: "Literal" }]
+        },
+        {
+            code: "function* foo(){while(true){yield 'foo';} while(true) {}}",
+            options: [{ checkLoops: true }],
             errors: [{ messageId: "unexpected", type: "Literal" }]
         },
         {
             code: "var a = function* foo(){while(true){} yield 'foo';}",
+            options: [{ checkLoops: "all" }],
+            errors: [{ messageId: "unexpected", type: "Literal" }]
+        },
+        {
+            code: "var a = function* foo(){while(true){} yield 'foo';}",
+            options: [{ checkLoops: true }],
             errors: [{ messageId: "unexpected", type: "Literal" }]
         },
         {
             code: "while (true) { function* foo() {yield;}}",
+            options: [{ checkLoops: "all" }],
+            errors: [{ messageId: "unexpected", type: "Literal" }]
+        },
+        {
+            code: "while (true) { function* foo() {yield;}}",
+            options: [{ checkLoops: true }],
             errors: [{ messageId: "unexpected", type: "Literal" }]
         },
         {
@@ -348,10 +396,12 @@ ruleTester.run("no-constant-condition", rule, {
         },
         {
             code: "function foo() {while (true) {function* bar() {while (true) {yield;}}}}",
+            options: [{ checkLoops: "all" }],
             errors: [{ messageId: "unexpected", type: "Literal" }]
         },
         {
             code: "function foo() {while (true) {const bar = function*() {while (true) {yield;}}}}",
+            options: [{ checkLoops: "all" }],
             errors: [{ messageId: "unexpected", type: "Literal" }]
         },
         {
@@ -386,15 +436,15 @@ ruleTester.run("no-constant-condition", rule, {
         },
 
         // #13238
-        { code: "if(/foo/ui);", parserOptions: { ecmaVersion: 11 }, errors: [{ messageId: "unexpected", type: "Literal" }] },
-        { code: "if(0n);", parserOptions: { ecmaVersion: 11 }, errors: [{ messageId: "unexpected", type: "Literal" }] },
-        { code: "if(0b0n);", parserOptions: { ecmaVersion: 11 }, errors: [{ messageId: "unexpected", type: "Literal" }] },
-        { code: "if(0o0n);", parserOptions: { ecmaVersion: 11 }, errors: [{ messageId: "unexpected", type: "Literal" }] },
-        { code: "if(0x0n);", parserOptions: { ecmaVersion: 11 }, errors: [{ messageId: "unexpected", type: "Literal" }] },
-        { code: "if(0b1n);", parserOptions: { ecmaVersion: 11 }, errors: [{ messageId: "unexpected", type: "Literal" }] },
-        { code: "if(0o1n);", parserOptions: { ecmaVersion: 11 }, errors: [{ messageId: "unexpected", type: "Literal" }] },
-        { code: "if(0x1n);", parserOptions: { ecmaVersion: 11 }, errors: [{ messageId: "unexpected", type: "Literal" }] },
-        { code: "if(0x1n || foo);", parserOptions: { ecmaVersion: 11 }, errors: [{ messageId: "unexpected", type: "LogicalExpression" }] },
+        { code: "if(/foo/ui);", languageOptions: { ecmaVersion: 11 }, errors: [{ messageId: "unexpected", type: "Literal" }] },
+        { code: "if(0n);", languageOptions: { ecmaVersion: 11 }, errors: [{ messageId: "unexpected", type: "Literal" }] },
+        { code: "if(0b0n);", languageOptions: { ecmaVersion: 11 }, errors: [{ messageId: "unexpected", type: "Literal" }] },
+        { code: "if(0o0n);", languageOptions: { ecmaVersion: 11 }, errors: [{ messageId: "unexpected", type: "Literal" }] },
+        { code: "if(0x0n);", languageOptions: { ecmaVersion: 11 }, errors: [{ messageId: "unexpected", type: "Literal" }] },
+        { code: "if(0b1n);", languageOptions: { ecmaVersion: 11 }, errors: [{ messageId: "unexpected", type: "Literal" }] },
+        { code: "if(0o1n);", languageOptions: { ecmaVersion: 11 }, errors: [{ messageId: "unexpected", type: "Literal" }] },
+        { code: "if(0x1n);", languageOptions: { ecmaVersion: 11 }, errors: [{ messageId: "unexpected", type: "Literal" }] },
+        { code: "if(0x1n || foo);", languageOptions: { ecmaVersion: 11 }, errors: [{ messageId: "unexpected", type: "LogicalExpression" }] },
 
         // Classes and instances are always truthy
         { code: "if(class {}) {}", errors: [{ messageId: "unexpected" }] },

@@ -1,7 +1,7 @@
 <!--
     Thank you for contributing!
 
-    ESLint adheres to the [JS Foundation Code of Conduct](https://eslint.org/conduct).
+    ESLint adheres to the [OpenJS Foundation Code of Conduct](https://eslint.org/conduct).
 -->
 
 #### Prerequisites checklist
@@ -31,7 +31,7 @@
 <!--
     Please ensure your pull request is ready:
 
-    - Read the pull request guide (https://eslint.org/docs/developer-guide/contributing/pull-requests)
+    - Read the pull request guide (https://eslint.org/docs/latest/contribute/pull-requests)
     - Include tests for this change
     - Update documentation for this change (if appropriate)
 -->

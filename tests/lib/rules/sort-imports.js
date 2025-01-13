@@ -10,13 +10,13 @@
 //------------------------------------------------------------------------------
 
 const rule = require("../../../lib/rules/sort-imports"),
-    { RuleTester } = require("../../../lib/rule-tester");
+    RuleTester = require("../../../lib/rule-tester/rule-tester");
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
-const ruleTester = new RuleTester({ parserOptions: { ecmaVersion: 6, sourceType: "module" } }),
+const ruleTester = new RuleTester({ languageOptions: { ecmaVersion: 6, sourceType: "module" } }),
     expectedError = {
         messageId: "sortImportsAlphabetically",
         type: "ImportDeclaration"
@@ -330,6 +330,14 @@ ruleTester.run("sort-imports", rule, {
         // allowSeparatedGroups
         {
             code: "import b from 'b';\nimport a from 'a';",
+            output: null,
+            errors: [{
+                messageId: "sortImportsAlphabetically",
+                type: "ImportDeclaration"
+            }]
+        },
+        {
+            code: "import b from 'b';\n\nimport a from 'a';",
             output: null,
             errors: [{
                 messageId: "sortImportsAlphabetically",

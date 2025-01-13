@@ -1,6 +1,7 @@
 ---
 title: getter-return
 rule_type: problem
+handled_by_typescript: true
 further_reading:
 - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get
 - https://leanpub.com/understandinges6/read/#leanpub-auto-accessor-properties
@@ -11,7 +12,7 @@ further_reading:
 The get syntax binds an object property to a function that will be called when that property is looked up. It was first introduced in ECMAScript 5:
 
 ```js
-var p = {
+const p = {
     get name(){
         return "nicholas";
     }
@@ -37,7 +38,7 @@ Examples of **incorrect** code for this rule:
 ```js
 /*eslint getter-return: "error"*/
 
-p = {
+const p = {
     get name(){
         // no returns.
     }
@@ -65,7 +66,7 @@ Examples of **correct** code for this rule:
 ```js
 /*eslint getter-return: "error"*/
 
-p = {
+const p = {
     get name(){
         return "nicholas";
     }
@@ -98,7 +99,7 @@ Examples of **correct** code for the `{ "allowImplicit": true }` option:
 
 ```js
 /*eslint getter-return: ["error", { allowImplicit: true }]*/
-p = {
+const p = {
     get name(){
         return; // return undefined implicitly.
     }

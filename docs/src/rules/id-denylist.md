@@ -37,7 +37,7 @@ For example, to restrict the use of common generic identifiers:
 }
 ```
 
-**Note:** The first element of the array is for the rule severity (see [configuring rules](../user-guide/configuring/rules). The other elements in the array are the identifiers that you want to disallow.
+**Note:** The first element of the array is for the rule severity (see [Configure Rules](../use/configure/rules)). The other elements in the array are the identifiers that you want to disallow.
 
 Examples of **incorrect** code for this rule with sample `"data", "callback"` restricted identifiers:
 
@@ -46,7 +46,7 @@ Examples of **incorrect** code for this rule with sample `"data", "callback"` re
 ```js
 /*eslint id-denylist: ["error", "data", "callback"] */
 
-var data = {...};
+const data = { ...values };
 
 function callback() {
     // ...
@@ -56,24 +56,24 @@ element.callback = function() {
     // ...
 };
 
-var itemSet = {
-    data: [...]
+const itemSet = {
+    data: [...values]
 };
 
 class Foo {
     data = [];
 }
 
-class Foo {
+class Bar {
     #data = [];
 }
 
-class Foo {
-    callback( {);
+class Baz {
+    callback() {}
 }
 
-class Foo {
-    #callback( {);
+class Qux {
+    #callback() {}
 }
 ```
 
@@ -86,7 +86,7 @@ Examples of **correct** code for this rule with sample `"data", "callback"` rest
 ```js
 /*eslint id-denylist: ["error", "data", "callback"] */
 
-var encodingOptions = {...};
+const encodingOptions = {...values};
 
 function processFileResult() {
     // ...
@@ -96,8 +96,8 @@ element.successHandler = function() {
     // ...
 };
 
-var itemSet = {
-    entities: [...]
+const itemSet = {
+    entities: [...values]
 };
 
 callback(); // all function calls are ignored
@@ -110,16 +110,16 @@ class Foo {
     items = [];
 }
 
-class Foo {
+class Bar {
     #items = [];
 }
 
-class Foo {
-    method( {);
+class Baz {
+    method() {}
 }
 
-class Foo {
-    #method( {);
+class Qux {
+    #method() {}
 }
 ```
 

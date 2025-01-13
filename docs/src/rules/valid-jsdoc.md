@@ -7,9 +7,9 @@ further_reading:
 - https://jsdoc.app
 ---
 
-
-
-This rule was [**deprecated**](https://eslint.org/blog/2018/11/jsdoc-end-of-life) in ESLint v5.10.0.
+:::important
+This rule was removed in ESLint v9.0.0 and replaced by the [`eslint-plugin-jsdoc`](https://github.com/gajus/eslint-plugin-jsdoc) equivalent.
+:::
 
 [JSDoc](http://usejsdoc.org) generates application programming interface (API) documentation from specially-formatted comments in JavaScript code. For example, this is a JSDoc comment for a function:
 
@@ -94,7 +94,6 @@ Examples of **correct** code for this rule:
 
 ```js
 /*eslint valid-jsdoc: "error"*/
-/*eslint-env es6*/
 
 /**
  * Add two numbers.
@@ -192,7 +191,6 @@ Examples of additional **incorrect** code for this rule with sample `"prefer": {
 
 ```js
 /*eslint valid-jsdoc: ["error", { "prefer": { "arg": "param", "argument": "param", "class": "constructor", "return": "returns", "virtual": "abstract" } }]*/
-/*eslint-env es6*/
 
 /**
  * Add two numbers.
@@ -238,7 +236,6 @@ Examples of additional **incorrect** code for this rule with sample `"preferType
 
 ```js
 /*eslint valid-jsdoc: ["error", { "preferType": { "Boolean": "boolean", "Number": "number", "object": "Object", "String": "string" } }]*/
-/*eslint-env es6*/
 
 /**
  * Add two numbers.

@@ -25,7 +25,7 @@ This rule forbids the use of the comma operator, with the following exceptions:
 
 Examples of **incorrect** code for this rule:
 
-::: incorrect
+::: incorrect { "sourceType": "script" }
 
 ```js
 /*eslint no-sequences: "error"*/
@@ -51,7 +51,7 @@ with (doSomething(), val) {}
 
 Examples of **correct** code for this rule:
 
-::: correct
+::: correct { "sourceType": "script" }
 
 ```js
 /*eslint no-sequences: "error"*/
@@ -87,9 +87,9 @@ Examples of **incorrect** code for arrow functions:
 /*eslint no-sequences: "error"*/
 const foo = (val) => (console.log('bar'), val);
 
-const foo = () => ((bar = 123), 10);
+const baz = () => ((bar = 123), 10);
 
-const foo = () => { return (bar = 123), 10 }
+const qux = () => { return (bar = 123), 10 }
 ```
 
 :::
@@ -102,9 +102,9 @@ Examples of **correct** code for arrow functions:
 /*eslint no-sequences: "error"*/
 const foo = (val) => ((console.log('bar'), val));
 
-const foo = () => (((bar = 123), 10));
+const baz = () => (((bar = 123), 10));
 
-const foo = () => { return ((bar = 123), 10) }
+const qux = () => { return ((bar = 123), 10) }
 ```
 
 :::
@@ -119,7 +119,7 @@ This rule takes one option, an object, with the following properties:
 
 Examples of **incorrect** code for this rule with the `{ "allowInParentheses": false }` option:
 
-::: incorrect
+::: incorrect { "sourceType": "script" }
 
 ```js
 /*eslint no-sequences: ["error", { "allowInParentheses": false }]*/
@@ -160,7 +160,7 @@ for (i = 0, j = 10; i < j; i++, j--);
 ## When Not To Use It
 
 Disable this rule if sequence expressions with the comma operator are acceptable.
-Another case is where you might want to report all usages of the comma operator, even in a for loop. You can achieve this using rule `no-restricted-syntax`:
+Another case is where you might want to report all usages of the comma operator, even in a `for` loop. You can achieve this using rule `no-restricted-syntax`:
 
 ```js
 {

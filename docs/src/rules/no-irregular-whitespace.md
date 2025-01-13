@@ -4,6 +4,7 @@ rule_type: problem
 further_reading:
 - https://es5.github.io/#x7.2
 - https://web.archive.org/web/20200414142829/http://timelessrepo.com/json-isnt-a-javascript-subset
+- https://codepoints.net/U+1680
 ---
 
 
@@ -16,11 +17,17 @@ A simple fix for this problem could be to rewrite the offending line from scratc
 
 Known issues these spaces cause:
 
+* Ogham Space Mark
+    * Is a valid token separator, but is rendered as a visible glyph in most typefaces, which may be misleading in source code.
+* Mongolian Vowel Separator
+    * Is no longer considered a space separator since Unicode 6.3. It will result in a syntax error in current parsers when used in place of a regular token separator.
+* Line Separator and Paragraph Separator
+    * These have always been valid whitespace characters and line terminators, but were considered illegal in string literals prior to ECMAScript 2019.
 * Zero Width Space
-    * Is NOT considered a separator for tokens and is often parsed as an `Unexpected token ILLEGAL`
-    * Is NOT shown in modern browsers making code repository software expected to resolve the visualization
-* Line Separator
-    * Is NOT a valid character within JSON which would cause parse errors
+    * Is NOT considered a separator for tokens and is often parsed as an `Unexpected token ILLEGAL`.
+    * Is NOT shown in modern browsers making code repository software expected to resolve the visualization.
+
+In JSON, none of the characters listed as irregular whitespace by this rule may appear outside of a string.
 
 ## Rule Details
 
@@ -32,27 +39,27 @@ This rule disallows the following characters except where the options allow:
 \u000B - Line Tabulation (\v) - <VT>
 \u000C - Form Feed (\f) - <FF>
 \u00A0 - No-Break Space - <NBSP>
-\u0085 - Next Line
-\u1680 - Ogham Space Mark
+\u0085 - Next Line - <NEL>
+\u1680 - Ogham Space Mark - <OGSP>
 \u180E - Mongolian Vowel Separator - <MVS>
 \ufeff - Zero Width No-Break Space - <BOM>
-\u2000 - En Quad
-\u2001 - Em Quad
+\u2000 - En Quad - <NQSP>
+\u2001 - Em Quad - <MQSP>
 \u2002 - En Space - <ENSP>
 \u2003 - Em Space - <EMSP>
-\u2004 - Three-Per-Em
-\u2005 - Four-Per-Em
-\u2006 - Six-Per-Em
-\u2007 - Figure Space
+\u2004 - Three-Per-Em - <THPMSP> - <3/MSP>
+\u2005 - Four-Per-Em - <FPMSP> - <4/MSP>
+\u2006 - Six-Per-Em - <SPMSP> - <6/MSP>
+\u2007 - Figure Space - <FSP>
 \u2008 - Punctuation Space - <PUNCSP>
-\u2009 - Thin Space
-\u200A - Hair Space
+\u2009 - Thin Space - <THSP>
+\u200A - Hair Space - <HSP>
 \u200B - Zero Width Space - <ZWSP>
-\u2028 - Line Separator
-\u2029 - Paragraph Separator
-\u202F - Narrow No-Break Space
-\u205f - Medium Mathematical Space
-\u3000 - Ideographic Space
+\u2028 - Line Separator - <LS> - <LSEP>
+\u2029 - Paragraph Separator - <PS> - <PSEP>
+\u202F - Narrow No-Break Space - <NNBSP>
+\u205f - Medium Mathematical Space - <MMSP>
+\u3000 - Ideographic Space - <IDSP>
 ```
 
 ## Options
@@ -63,6 +70,7 @@ This rule has an object option for exceptions:
 * `"skipComments": true` allows any whitespace characters in comments
 * `"skipRegExps": true` allows any whitespace characters in regular expression literals
 * `"skipTemplates": true` allows any whitespace characters in template literals
+* `"skipJSXText": true` allows any whitespace characters in JSX text
 
 ### skipStrings
 
@@ -73,31 +81,31 @@ Examples of **incorrect** code for this rule with the default `{ "skipStrings": 
 ```js
 /*eslint no-irregular-whitespace: "error"*/
 
-function thing() /*<NBSP>*/{
+const thing = function() /*<NBSP>*/{
     return 'test';
 }
 
-function thing( /*<NBSP>*/){
+const foo = function( /*<NBSP>*/){
     return 'test';
 }
 
-function thing /*<NBSP>*/(){
+const bar = function /*<NBSP>*/(){
     return 'test';
 }
 
-function thing᠎/*<MVS>*/(){
+const baz = function /*<Ogham Space Mark>*/(){
     return 'test';
 }
 
-function thing() {
+const qux = function() {
     return 'test'; /*<ENSP>*/
 }
 
-function thing() {
+const quux = function() {
     return 'test'; /*<NBSP>*/
 }
 
-function thing() {
+const item = function() {
     // Description <NBSP>: some descriptive text
 }
 
@@ -105,12 +113,11 @@ function thing() {
 Description <NBSP>: some descriptive text
 */
 
-function thing() {
+const func = function() {
     return / <NBSP>regexp/;
 }
 
-/*eslint-env es6*/
-function thing() {
+const myFunc = function() {
     return `template <NBSP>string`;
 }
 ```
@@ -124,15 +131,15 @@ Examples of **correct** code for this rule with the default `{ "skipStrings": tr
 ```js
 /*eslint no-irregular-whitespace: "error"*/
 
-function thing() {
+const thing = function() {
     return ' <NBSP>thing';
 }
 
-function thing() {
+const foo = function() {
     return '​<ZWSP>thing';
 }
 
-function thing() {
+const bar = function() {
     return 'th <NBSP>ing';
 }
 ```
@@ -183,10 +190,25 @@ Examples of additional **correct** code for this rule with the `{ "skipTemplates
 
 ```js
 /*eslint no-irregular-whitespace: ["error", { "skipTemplates": true }]*/
-/*eslint-env es6*/
 
 function thing() {
     return `template <NBSP>string`;
+}
+```
+
+:::
+
+### skipJSXText
+
+Examples of additional **correct** code for this rule with the `{ "skipJSXText": true }` option:
+
+::: correct { "parserOptions": { "ecmaFeatures": { "jsx": true } } }
+
+```jsx
+/*eslint no-irregular-whitespace: ["error", { "skipJSXText": true }]*/
+
+function Thing() {
+    return <div>text in JSX</div>; // <NBSP> before `JSX`
 }
 ```
 

@@ -10,7 +10,7 @@
 //------------------------------------------------------------------------------
 
 const rule = require("../../../lib/rules/sort-keys"),
-    { RuleTester } = require("../../../lib/rule-tester");
+    RuleTester = require("../../../lib/rule-tester/rule-tester");
 
 //------------------------------------------------------------------------------
 // Tests
@@ -22,10 +22,10 @@ ruleTester.run("sort-keys", rule, {
     valid: [
 
         // default (asc)
-        { code: "var obj = {'':1, [``]:2}", options: [], parserOptions: { ecmaVersion: 6 } },
-        { code: "var obj = {[``]:1, '':2}", options: [], parserOptions: { ecmaVersion: 6 } },
+        { code: "var obj = {'':1, [``]:2}", options: [], languageOptions: { ecmaVersion: 6 } },
+        { code: "var obj = {[``]:1, '':2}", options: [], languageOptions: { ecmaVersion: 6 } },
         { code: "var obj = {'':1, a:2}", options: [] },
-        { code: "var obj = {[``]:1, a:2}", options: [], parserOptions: { ecmaVersion: 6 } },
+        { code: "var obj = {[``]:1, a:2}", options: [], languageOptions: { ecmaVersion: 6 } },
         { code: "var obj = {_:2, a:1, b:3} // default", options: [] },
         { code: "var obj = {a:1, b:3, c:2}", options: [] },
         { code: "var obj = {a:2, b:3, b_:1}", options: [] },
@@ -33,34 +33,34 @@ ruleTester.run("sort-keys", rule, {
         { code: "var obj = {$:1, A:3, _:2, a:4}", options: [] },
         { code: "var obj = {1:1, '11':2, 2:4, A:3}", options: [] },
         { code: "var obj = {'#':1, 'Z':2, À:3, è:4}", options: [] },
-        { code: "var obj = { [/(?<zero>0)/]: 1, '/(?<zero>0)/': 2 }", options: [], parserOptions: { ecmaVersion: 2018 } },
+        { code: "var obj = { [/(?<zero>0)/]: 1, '/(?<zero>0)/': 2 }", options: [], languageOptions: { ecmaVersion: 2018 } },
 
         // ignore non-simple computed properties.
-        { code: "var obj = {a:1, b:3, [a + b]: -1, c:2}", options: [], parserOptions: { ecmaVersion: 6 } },
-        { code: "var obj = {'':1, [f()]:2, a:3}", options: [], parserOptions: { ecmaVersion: 6 } },
-        { code: "var obj = {a:1, [b++]:2, '':3}", options: ["desc"], parserOptions: { ecmaVersion: 6 } },
+        { code: "var obj = {a:1, b:3, [a + b]: -1, c:2}", options: [], languageOptions: { ecmaVersion: 6 } },
+        { code: "var obj = {'':1, [f()]:2, a:3}", options: [], languageOptions: { ecmaVersion: 6 } },
+        { code: "var obj = {a:1, [b++]:2, '':3}", options: ["desc"], languageOptions: { ecmaVersion: 6 } },
 
         // ignore properties separated by spread properties
-        { code: "var obj = {a:1, ...z, b:1}", options: [], parserOptions: { ecmaVersion: 2018 } },
-        { code: "var obj = {b:1, ...z, a:1}", options: [], parserOptions: { ecmaVersion: 2018 } },
-        { code: "var obj = {...a, b:1, ...c, d:1}", options: [], parserOptions: { ecmaVersion: 2018 } },
-        { code: "var obj = {...a, b:1, ...d, ...c, e:2, z:5}", options: [], parserOptions: { ecmaVersion: 2018 } },
-        { code: "var obj = {b:1, ...c, ...d, e:2}", options: [], parserOptions: { ecmaVersion: 2018 } },
-        { code: "var obj = {a:1, ...z, '':2}", options: [], parserOptions: { ecmaVersion: 2018 } },
-        { code: "var obj = {'':1, ...z, 'a':2}", options: ["desc"], parserOptions: { ecmaVersion: 2018 } },
+        { code: "var obj = {a:1, ...z, b:1}", options: [], languageOptions: { ecmaVersion: 2018 } },
+        { code: "var obj = {b:1, ...z, a:1}", options: [], languageOptions: { ecmaVersion: 2018 } },
+        { code: "var obj = {...a, b:1, ...c, d:1}", options: [], languageOptions: { ecmaVersion: 2018 } },
+        { code: "var obj = {...a, b:1, ...d, ...c, e:2, z:5}", options: [], languageOptions: { ecmaVersion: 2018 } },
+        { code: "var obj = {b:1, ...c, ...d, e:2}", options: [], languageOptions: { ecmaVersion: 2018 } },
+        { code: "var obj = {a:1, ...z, '':2}", options: [], languageOptions: { ecmaVersion: 2018 } },
+        { code: "var obj = {'':1, ...z, 'a':2}", options: ["desc"], languageOptions: { ecmaVersion: 2018 } },
 
         // not ignore properties not separated by spread properties
-        { code: "var obj = {...z, a:1, b:1}", options: [], parserOptions: { ecmaVersion: 2018 } },
-        { code: "var obj = {...z, ...c, a:1, b:1}", options: [], parserOptions: { ecmaVersion: 2018 } },
-        { code: "var obj = {a:1, b:1, ...z}", options: [], parserOptions: { ecmaVersion: 2018 } },
-        { code: "var obj = {...z, ...x, a:1, ...c, ...d, f:5, e:4}", options: ["desc"], parserOptions: { ecmaVersion: 2018 } },
+        { code: "var obj = {...z, a:1, b:1}", options: [], languageOptions: { ecmaVersion: 2018 } },
+        { code: "var obj = {...z, ...c, a:1, b:1}", options: [], languageOptions: { ecmaVersion: 2018 } },
+        { code: "var obj = {a:1, b:1, ...z}", options: [], languageOptions: { ecmaVersion: 2018 } },
+        { code: "var obj = {...z, ...x, a:1, ...c, ...d, f:5, e:4}", options: ["desc"], languageOptions: { ecmaVersion: 2018 } },
 
         // works when spread occurs somewhere other than an object literal
-        { code: "function fn(...args) { return [...args].length; }", options: [], parserOptions: { ecmaVersion: 2018 } },
-        { code: "function g() {}; function f(...args) { return g(...args); }", options: [], parserOptions: { ecmaVersion: 2018 } },
+        { code: "function fn(...args) { return [...args].length; }", options: [], languageOptions: { ecmaVersion: 2018 } },
+        { code: "function g() {}; function f(...args) { return g(...args); }", options: [], languageOptions: { ecmaVersion: 2018 } },
 
         // ignore destructuring patterns.
-        { code: "let {a, b} = {}", options: [], parserOptions: { ecmaVersion: 6 } },
+        { code: "let {a, b} = {}", options: [], languageOptions: { ecmaVersion: 6 } },
 
         // nested
         { code: "var obj = {a:1, b:{x:1, y:1}, c:1}", options: [] },
@@ -196,7 +196,7 @@ ruleTester.run("sort-keys", rule, {
             code: `
                 var obj = {
                     b: 1
-                    
+
                     ,
 
                     // comment
@@ -218,7 +218,7 @@ ruleTester.run("sort-keys", rule, {
                 }
             `,
             options: ["asc", { allowLineSeparatedGroups: true }],
-            parserOptions: { ecmaVersion: 6 }
+            languageOptions: { ecmaVersion: 6 }
         },
         {
             code: `
@@ -234,7 +234,7 @@ ruleTester.run("sort-keys", rule, {
                 }
             `,
             options: ["asc", { allowLineSeparatedGroups: true }],
-            parserOptions: { ecmaVersion: 6 }
+            languageOptions: { ecmaVersion: 6 }
         },
         {
             code: `
@@ -246,7 +246,7 @@ ruleTester.run("sort-keys", rule, {
                 }
             `,
             options: ["asc", { allowLineSeparatedGroups: true }],
-            parserOptions: { ecmaVersion: 6 }
+            languageOptions: { ecmaVersion: 6 }
         },
         {
             code: `
@@ -270,7 +270,7 @@ ruleTester.run("sort-keys", rule, {
                 }
             `,
             options: ["asc", { allowLineSeparatedGroups: true }],
-            parserOptions: { ecmaVersion: 6 }
+            languageOptions: { ecmaVersion: 6 }
         },
         {
             code: `
@@ -293,7 +293,7 @@ ruleTester.run("sort-keys", rule, {
                 }
             `,
             options: ["asc", { allowLineSeparatedGroups: true }],
-            parserOptions: { ecmaVersion: 6 }
+            languageOptions: { ecmaVersion: 6 }
         },
         {
             code: `
@@ -306,7 +306,7 @@ ruleTester.run("sort-keys", rule, {
                 }
             `,
             options: ["asc", { allowLineSeparatedGroups: true }],
-            parserOptions: { ecmaVersion: 6 }
+            languageOptions: { ecmaVersion: 6 }
         },
         {
             code: `
@@ -317,7 +317,7 @@ ruleTester.run("sort-keys", rule, {
                 };
             `,
             options: ["asc", { allowLineSeparatedGroups: true }],
-            parserOptions: { ecmaVersion: 6 }
+            languageOptions: { ecmaVersion: 6 }
         },
         {
             code: `
@@ -330,7 +330,7 @@ ruleTester.run("sort-keys", rule, {
                 };
             `,
             options: ["asc", { allowLineSeparatedGroups: true }],
-            parserOptions: { ecmaVersion: 6 }
+            languageOptions: { ecmaVersion: 6 }
         },
         {
             code: `
@@ -343,7 +343,7 @@ ruleTester.run("sort-keys", rule, {
                 }
             `,
             options: ["asc", { allowLineSeparatedGroups: true }],
-            parserOptions: { ecmaVersion: 2018 }
+            languageOptions: { ecmaVersion: 2018 }
         },
         {
             code: `
@@ -357,7 +357,21 @@ ruleTester.run("sort-keys", rule, {
                 }
             `,
             options: ["asc", { allowLineSeparatedGroups: true }],
-            parserOptions: { ecmaVersion: 2018 }
+            languageOptions: { ecmaVersion: 2018 }
+        },
+
+        // ignoreComputedKeys
+        {
+            code: "var obj = { ['b']: 1, a: 2 }",
+            options: ["asc", { ignoreComputedKeys: true }]
+        },
+        {
+            code: "var obj = { a: 1, [c]: 2, b: 3 }",
+            options: ["asc", { ignoreComputedKeys: true }]
+        },
+        {
+            code: "var obj = { c: 1, ['b']: 2, a: 3 }",
+            options: ["asc", { ignoreComputedKeys: true }]
         }
     ],
     invalid: [
@@ -380,7 +394,7 @@ ruleTester.run("sort-keys", rule, {
         },
         {
             code: "var obj = {a:1, [``]:2} // default",
-            parserOptions: { ecmaVersion: 6 },
+            languageOptions: { ecmaVersion: 6 },
             errors: [
                 {
                     messageId: "sortKeys",
@@ -501,7 +515,7 @@ ruleTester.run("sort-keys", rule, {
         },
         {
             code: "var obj = { null: 1, [/(?<zero>0)/]: 2 }",
-            parserOptions: { ecmaVersion: 2018 },
+            languageOptions: { ecmaVersion: 2018 },
             errors: [
                 {
                     messageId: "sortKeys",
@@ -520,7 +534,7 @@ ruleTester.run("sort-keys", rule, {
         {
             code: "var obj = {...z, c:1, b:1}",
             options: [],
-            parserOptions: { ecmaVersion: 2018 },
+            languageOptions: { ecmaVersion: 2018 },
             errors: [
                 {
                     messageId: "sortKeys",
@@ -537,7 +551,7 @@ ruleTester.run("sort-keys", rule, {
         {
             code: "var obj = {...z, ...c, d:4, b:1, ...y, ...f, e:2, a:1}",
             options: [],
-            parserOptions: { ecmaVersion: 2018 },
+            languageOptions: { ecmaVersion: 2018 },
             errors: [
                 {
                     messageId: "sortKeys",
@@ -564,7 +578,7 @@ ruleTester.run("sort-keys", rule, {
         {
             code: "var obj = {c:1, b:1, ...a}",
             options: [],
-            parserOptions: { ecmaVersion: 2018 },
+            languageOptions: { ecmaVersion: 2018 },
             errors: [
                 {
                     messageId: "sortKeys",
@@ -581,7 +595,7 @@ ruleTester.run("sort-keys", rule, {
         {
             code: "var obj = {...z, ...a, c:1, b:1}",
             options: [],
-            parserOptions: { ecmaVersion: 2018 },
+            languageOptions: { ecmaVersion: 2018 },
             errors: [
                 {
                     messageId: "sortKeys",
@@ -598,7 +612,7 @@ ruleTester.run("sort-keys", rule, {
         {
             code: "var obj = {...z, b:1, a:1, ...d, ...c}",
             options: [],
-            parserOptions: { ecmaVersion: 2018 },
+            languageOptions: { ecmaVersion: 2018 },
             errors: [
                 {
                     messageId: "sortKeys",
@@ -615,7 +629,7 @@ ruleTester.run("sort-keys", rule, {
         {
             code: "var obj = {...z, a:2, b:0, ...x, ...c}",
             options: ["desc"],
-            parserOptions: { ecmaVersion: 2018 },
+            languageOptions: { ecmaVersion: 2018 },
             errors: [
                 {
                     messageId: "sortKeys",
@@ -632,7 +646,7 @@ ruleTester.run("sort-keys", rule, {
         {
             code: "var obj = {...z, a:2, b:0, ...x}",
             options: ["desc"],
-            parserOptions: { ecmaVersion: 2018 },
+            languageOptions: { ecmaVersion: 2018 },
             errors: [
                 {
                     messageId: "sortKeys",
@@ -649,7 +663,7 @@ ruleTester.run("sort-keys", rule, {
         {
             code: "var obj = {...z, '':1, a:2}",
             options: ["desc"],
-            parserOptions: { ecmaVersion: 2018 },
+            languageOptions: { ecmaVersion: 2018 },
             errors: [
                 {
                     messageId: "sortKeys",
@@ -667,7 +681,7 @@ ruleTester.run("sort-keys", rule, {
         // ignore non-simple computed properties, but their position shouldn't affect other comparisons.
         {
             code: "var obj = {a:1, [b+c]:2, '':3}",
-            parserOptions: { ecmaVersion: 6 },
+            languageOptions: { ecmaVersion: 6 },
             errors: [
                 {
                     messageId: "sortKeys",
@@ -684,7 +698,7 @@ ruleTester.run("sort-keys", rule, {
         {
             code: "var obj = {'':1, [b+c]:2, a:3}",
             options: ["desc"],
-            parserOptions: { ecmaVersion: 6 },
+            languageOptions: { ecmaVersion: 6 },
             errors: [
                 {
                     messageId: "sortKeys",
@@ -701,7 +715,7 @@ ruleTester.run("sort-keys", rule, {
         {
             code: "var obj = {b:1, [f()]:2, '':3, a:4}",
             options: ["desc"],
-            parserOptions: { ecmaVersion: 6 },
+            languageOptions: { ecmaVersion: 6 },
             errors: [
                 {
                     messageId: "sortKeys",
@@ -719,7 +733,7 @@ ruleTester.run("sort-keys", rule, {
         // not ignore simple computed properties.
         {
             code: "var obj = {a:1, b:3, [a]: -1, c:2}",
-            parserOptions: { ecmaVersion: 6 },
+            languageOptions: { ecmaVersion: 6 },
             errors: [
                 {
                     messageId: "sortKeys",
@@ -1277,7 +1291,7 @@ ruleTester.run("sort-keys", rule, {
         {
             code: "var obj = {[``]:1, a:'2'} // desc",
             options: ["desc"],
-            parserOptions: { ecmaVersion: 6 },
+            languageOptions: { ecmaVersion: 6 },
             errors: [
                 {
                     messageId: "sortKeys",
@@ -1990,7 +2004,29 @@ ruleTester.run("sort-keys", rule, {
                 }
             `,
             options: ["asc", { allowLineSeparatedGroups: false }],
-            parserOptions: { ecmaVersion: 6 },
+            languageOptions: { ecmaVersion: 6 },
+            errors: [
+                {
+                    messageId: "sortKeys",
+                    data: {
+                        natural: "",
+                        insensitive: "",
+                        order: "asc",
+                        thisName: "a",
+                        prevName: "b"
+                    }
+                }
+            ]
+        },
+        {
+            code: `
+                let obj = {
+                    b
+
+                    ,a
+                }
+            `,
+            languageOptions: { ecmaVersion: 6 },
             errors: [
                 {
                     messageId: "sortKeys",
@@ -2017,7 +2053,7 @@ ruleTester.run("sort-keys", rule, {
                   }
              `,
             options: ["asc", { allowLineSeparatedGroups: true }],
-            parserOptions: { ecmaVersion: 6 },
+            languageOptions: { ecmaVersion: 6 },
             errors: [
                 {
                     messageId: "sortKeys",
@@ -2044,7 +2080,7 @@ ruleTester.run("sort-keys", rule, {
                   }
              `,
             options: ["asc", { allowLineSeparatedGroups: true }],
-            parserOptions: { ecmaVersion: 6 },
+            languageOptions: { ecmaVersion: 6 },
             errors: [
                 {
                     messageId: "sortKeys",
@@ -2069,7 +2105,7 @@ ruleTester.run("sort-keys", rule, {
                   }
              `,
             options: ["asc", { allowLineSeparatedGroups: true }],
-            parserOptions: { ecmaVersion: 6 },
+            languageOptions: { ecmaVersion: 6 },
             errors: [
                 {
                     messageId: "sortKeys",
@@ -2092,7 +2128,7 @@ ruleTester.run("sort-keys", rule, {
                 }
             `,
             options: ["asc", { allowLineSeparatedGroups: true }],
-            parserOptions: { ecmaVersion: 6 },
+            languageOptions: { ecmaVersion: 6 },
             errors: [
                 {
                     messageId: "sortKeys",
@@ -2119,7 +2155,7 @@ ruleTester.run("sort-keys", rule, {
                 }
             `,
             options: ["asc", { allowLineSeparatedGroups: true }],
-            parserOptions: { ecmaVersion: 6 },
+            languageOptions: { ecmaVersion: 6 },
             errors: [
                 {
                     messageId: "sortKeys",
@@ -2153,7 +2189,7 @@ ruleTester.run("sort-keys", rule, {
                 }
             `,
             options: ["asc", { allowLineSeparatedGroups: true }],
-            parserOptions: { ecmaVersion: 6 },
+            languageOptions: { ecmaVersion: 6 },
             errors: [
                 {
                     messageId: "sortKeys",
@@ -2207,7 +2243,7 @@ ruleTester.run("sort-keys", rule, {
                 };
             `,
             options: ["asc", { allowLineSeparatedGroups: true }],
-            parserOptions: { ecmaVersion: 6 },
+            languageOptions: { ecmaVersion: 6 },
             errors: [
                 {
                     messageId: "sortKeys",
@@ -2233,7 +2269,23 @@ ruleTester.run("sort-keys", rule, {
                 }
             `,
             options: ["asc", { allowLineSeparatedGroups: true }],
-            parserOptions: { ecmaVersion: 2018 },
+            languageOptions: { ecmaVersion: 2018 },
+            errors: [
+                {
+                    messageId: "sortKeys",
+                    data: {
+                        natural: "",
+                        insensitive: "",
+                        order: "asc",
+                        thisName: "a",
+                        prevName: "b"
+                    }
+                }
+            ]
+        },
+        {
+            code: "var obj = { d: 1, ['c']: 2, b: 3, a: 4 }",
+            options: ["asc", { ignoreComputedKeys: true, minKeys: 4 }],
             errors: [
                 {
                     messageId: "sortKeys",

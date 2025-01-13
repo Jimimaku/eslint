@@ -6,7 +6,7 @@ related_rules:
 - spaced-comment
 ---
 
-
+This rule was **deprecated** in ESLint v8.53.0. Please use the [corresponding rule](https://eslint.style/rules/js/lines-around-comment) in [`@stylistic/eslint-plugin-js`](https://eslint.style/packages/js).
 
 Many style guides require empty lines before or after comments. The primary goal
 of these rules is to make the comments easier to read and improve readability of the code.
@@ -33,6 +33,7 @@ This rule has an object option:
 * `"allowClassEnd": true` allows comments to appear at the end of classes
 * `"applyDefaultIgnorePatterns"` enables or disables the default comment patterns to be ignored by the rule
 * `"ignorePattern"` custom patterns to be ignored by the rule
+* `"afterHashbangComment": true` requires an empty line after hashbang comments
 
 ### beforeBlockComment
 
@@ -232,7 +233,7 @@ class C {
 switch (foo) {
   /* what a great and wonderful day */
 
-  case 1:    
+  case 1:
     bar();
     break;
 }
@@ -316,7 +317,7 @@ class C {
 }
 
 switch (foo) {
-  case 1:    
+  case 1:
     bar();
     break;
 
@@ -652,9 +653,9 @@ const [
 
 ### ignorePattern
 
-By default this rule ignores comments starting with the following words: `eslint`, `jshint`, `jslint`, `istanbul`, `global`, `exported`, `jscs`. To ignore more comments in addition to the defaults, set the `ignorePattern` option to a string pattern that will be passed to the [`RegExp` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/RegExp).
+By default this rule ignores comments starting with the following words: `eslint`, `jshint`, `jslint`, `istanbul`, `global`, `exported`, `jscs`.
 
-Examples of **correct** code for the `ignorePattern` option:
+Examples of **correct** code for this rule:
 
 ::: correct
 
@@ -662,10 +663,24 @@ Examples of **correct** code for the `ignorePattern` option:
 /*eslint lines-around-comment: ["error"]*/
 
 foo();
-/* eslint mentioned in this comment */,
+/* jshint mentioned in this comment */
 bar();
+```
 
+:::
+
+To ignore more comments in addition to the defaults, set the `ignorePattern` option to a string pattern that will be passed to the [`RegExp` constructor](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/RegExp).
+
+Examples of **correct** code for the `ignorePattern` option:
+
+::: correct
+
+```js
 /*eslint lines-around-comment: ["error", { "ignorePattern": "pragma" }] */
+
+foo();
+/* jshint mentioned in this comment */
+bar();
 
 foo();
 /* a valid comment using pragma in it */
@@ -711,8 +726,37 @@ Examples of **incorrect** code for the `{ "applyDefaultIgnorePatterns": false }`
 /*eslint lines-around-comment: ["error", { "applyDefaultIgnorePatterns": false }] */
 
 foo();
-/* eslint mentioned in comment */
+/* jshint mentioned in comment */
 
+```
+
+:::
+
+### afterHashbangComment
+
+Examples of **incorrect** code for this rule with the `{ "afterHashbangComment": true }` option:
+
+::: incorrect
+
+```js
+#!foo
+var day = "great"
+
+/*eslint lines-around-comment: ["error", { "afterHashbangComment": true }] */
+```
+
+:::
+
+Examples of **correct** code for this rule with the `{ "afterHashbangComment": true }` option:
+
+::: correct
+
+```js
+#!foo
+
+var day = "great"
+
+/*eslint lines-around-comment: ["error", { "afterHashbangComment": true }] */
 ```
 
 :::

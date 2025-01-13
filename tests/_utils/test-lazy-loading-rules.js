@@ -11,8 +11,8 @@
 
 "use strict";
 
-const path = require("path");
-const assert = require("assert");
+const path = require("node:path");
+const assert = require("node:assert");
 const { addHook } = require("pirates");
 
 const {
@@ -56,8 +56,8 @@ addHook(
  * Everything related to loading any ESLint modules should be in this IIFE
  */
 (async () => {
-    const { ESLint } = require("../..");
-    const eslint = new ESLint({ cwd });
+    const { LegacyESLint } = require("../../lib/unsupported-api");
+    const eslint = new LegacyESLint({ cwd });
 
     await eslint.lintFiles([pattern]);
 })().catch(({ message, stack }) => {

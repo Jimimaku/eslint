@@ -7,13 +7,16 @@ const pluginTOC = require("eleventy-plugin-nesting-toc");
 const markdownItAnchor = require("markdown-it-anchor");
 const markdownItContainer = require("markdown-it-container");
 const Image = require("@11ty/eleventy-img");
-const path = require("path");
+const path = require("node:path");
 const { slug } = require("github-slugger");
 const yaml = require("js-yaml");
-const { highlighter, preWrapperPlugin, lineNumberPlugin } = require("./src/_plugins/md-syntax-highlighter");
+const { highlighter, lineNumberPlugin } = require("./src/_plugins/md-syntax-highlighter");
 const {
     DateTime
 } = require("luxon");
+const markdownIt = require("markdown-it");
+const markdownItRuleExample = require("./tools/markdown-it-rule-example");
+const prismESLintHook = require("./tools/prism-eslint-hook");
 
 module.exports = function(eleventyConfig) {
 
@@ -25,19 +28,25 @@ module.exports = function(eleventyConfig) {
      * it's easier to see if URLs are broken.
      *
      * When a release is published, HEAD is pushed to the "latest" branch.
-     * Netlify deploys that branch as well, and in that case, we want the
-     * docs to be loaded from /docs/latest on eslint.org.
+     * When a pre-release is published, HEAD is pushed to the "next" branch.
+     * Netlify deploys those branches as well, and in that case, we want the
+     * docs to be loaded from /docs/latest or /docs/next on eslint.org.
      *
      * The path prefix is turned off for deploy previews so we can properly
      * see changes before deployed.
      */
 
     let pathPrefix = "/docs/head/";
+    const isNumberVersion = process.env.BRANCH && /^v\d+\.x$/u.test(process.env.BRANCH);
 
     if (process.env.CONTEXT === "deploy-preview") {
         pathPrefix = "/";
     } else if (process.env.BRANCH === "latest") {
         pathPrefix = "/docs/latest/";
+    } else if (process.env.BRANCH === "next") {
+        pathPrefix = "/docs/next/";
+    } else if (isNumberVersion) {
+        pathPrefix = `/docs/${process.env.BRANCH}/`; // `/docs/v8.x/`, `/docs/v9.x/`, `/docs/v10.x/` ...
     }
 
     //------------------------------------------------------------------------------
@@ -49,7 +58,10 @@ module.exports = function(eleventyConfig) {
 
     eleventyConfig.addGlobalData("site_name", siteName);
     eleventyConfig.addGlobalData("GIT_BRANCH", process.env.BRANCH);
+    eleventyConfig.addGlobalData("HEAD", process.env.BRANCH === "main");
     eleventyConfig.addGlobalData("NOINDEX", process.env.BRANCH !== "latest");
+    eleventyConfig.addGlobalData("PATH_PREFIX", pathPrefix);
+    eleventyConfig.addGlobalData("is_number_version", isNumberVersion);
     eleventyConfig.addDataExtension("yml", contents => yaml.load(contents));
 
     //------------------------------------------------------------------------------
@@ -60,23 +72,12 @@ module.exports = function(eleventyConfig) {
 
     eleventyConfig.addFilter("jsonify", variable => JSON.stringify(variable));
 
-    /**
-     * Takes in a string and converts to a slug
-     * @param {string} text text to be converted into slug
-     * @returns {string} slug to be used as anchors
-     */
-    function slugify(text) {
-        return slug(text.replace(/[<>()[\]{}]/gu, ""))
-        // eslint-disable-next-line no-control-regex -- used regex from https://github.com/eslint/archive-website/blob/master/_11ty/plugins/markdown-plugins.js#L37
-            .replace(/[^\u{00}-\u{FF}]/gu, "");
-    }
-
     eleventyConfig.addFilter("slugify", str => {
         if (!str) {
             return "";
         }
 
-        return slugify(str);
+        return slug(str);
     });
 
     eleventyConfig.addFilter("URIencode", str => {
@@ -119,7 +120,7 @@ module.exports = function(eleventyConfig) {
      * Source: https://github.com/11ty/eleventy/issues/658
      */
     eleventyConfig.addFilter("markdown", value => {
-        const markdown = require("markdown-it")({
+        const markdown = markdownIt({
             html: true
         });
 
@@ -186,13 +187,57 @@ module.exports = function(eleventyConfig) {
         `.trim();
     }
 
-    const markdownIt = require("markdown-it");
+    /**
+     * Encodes text in the base 64 format used in playground URL params.
+     * @param {string} text Text to be encoded to base 64.
+     * @see https://github.com/eslint/eslint.org/blob/1b2f2aabeac2955a076d61788da8a0008bca6fb6/src/playground/utils/unicode.js
+     * @returns {string} The base 64 encoded equivalent of the text.
+     */
+    function encodeToBase64(text) {
+        return btoa(unescape(encodeURIComponent(text)));
+    }
+
+    // markdown-it plugin options for playground-linked code blocks in rule examples.
+    const ruleExampleOptions = markdownItRuleExample({
+        open({ type, code, languageOptions, env, codeBlockToken }) {
+
+            prismESLintHook.addContentMustBeMarked(codeBlockToken.content, languageOptions);
+
+            const isRuleRemoved = !Object.hasOwn(env.rules_meta, env.title);
+
+            if (isRuleRemoved) {
+                return `<div class="${type}">`;
+            }
+
+            // See https://github.com/eslint/eslint.org/blob/29e1d8a000592245e4a30c1996e794643e9b263a/src/playground/App.js#L91-L105
+            const state = encodeToBase64(
+                JSON.stringify({
+                    options: languageOptions ? { languageOptions } : void 0,
+                    text: code
+                })
+            );
+            const prefix = process.env.CONTEXT && process.env.CONTEXT !== "deploy-preview"
+                ? ""
+                : "https://eslint.org";
+
+            return `
+                        <div class="${type}">
+                            <a class="c-btn c-btn--secondary c-btn--playground" href="${prefix}/play#${state}" target="_blank">
+                                Open in Playground
+                            </a>
+            `.trim();
+        },
+        close() {
+            return "</div>";
+        }
+    });
+
     const md = markdownIt({ html: true, linkify: true, typographer: true, highlight: (str, lang) => highlighter(md, str, lang) })
         .use(markdownItAnchor, {
-            slugify
+            slugify: s => slug(s)
         })
-        .use(markdownItContainer, "correct", {})
-        .use(markdownItContainer, "incorrect", {})
+        .use(markdownItContainer, "img-container", {})
+        .use(markdownItContainer, "rule-example", ruleExampleOptions)
         .use(markdownItContainer, "warning", {
             render(tokens, idx) {
                 return generateAlertMarkup("warning", tokens, idx);
@@ -208,7 +253,6 @@ module.exports = function(eleventyConfig) {
                 return generateAlertMarkup("important", tokens, idx);
             }
         })
-        .use(preWrapperPlugin)
         .use(lineNumberPlugin)
         .disable("code");
 
@@ -445,25 +489,6 @@ module.exports = function(eleventyConfig) {
     //------------------------------------------------------------------------------
 
     /*
-     * When we run `eleventy --serve`, Eleventy 1.x uses browser-sync to serve the content.
-     * By default, browser-sync (more precisely, underlying serve-static) will not serve
-     * `foo/bar.html` when we request `foo/bar`. Thus, we need to rewrite URLs to append `.html`
-     * so that pretty links without `.html` can work in a local development environment.
-     *
-     * There's no need to rewrite URLs that end with `/`, because that already works well
-     * (server will return the content of `index.html` in the directory).
-     * URLs with a file extension, like main.css, main.js, sitemap.xml, etc. should not be rewritten
-     */
-    eleventyConfig.setBrowserSyncConfig({
-        middleware(req, res, next) {
-            if (!/(?:\.[a-zA-Z][^/]*|\/)$/u.test(req.url)) {
-                req.url += ".html";
-            }
-            return next();
-        }
-    });
-
-    /*
      * Generate the sitemap only in certain contexts to prevent unwanted discovery of sitemaps that
      * contain URLs we'd prefer not to appear in search results (URLs in sitemaps are considered important).
      * In particular, we don't want to deploy https://eslint.org/docs/head/sitemap.xml
@@ -482,14 +507,12 @@ module.exports = function(eleventyConfig) {
         eleventyConfig.ignores.add("src/static/sitemap.njk"); // ... then don't generate the sitemap.
     }
 
-
     return {
         passthroughFileCopy: true,
 
         pathPrefix,
 
         markdownTemplateEngine: "njk",
-        dataTemplateEngine: "njk",
         htmlTemplateEngine: "njk",
 
         dir: {

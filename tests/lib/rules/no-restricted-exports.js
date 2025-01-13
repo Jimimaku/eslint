@@ -10,13 +10,13 @@
 //------------------------------------------------------------------------------
 
 const rule = require("../../../lib/rules/no-restricted-exports");
-const { RuleTester } = require("../../../lib/rule-tester");
+const RuleTester = require("../../../lib/rule-tester/rule-tester");
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
-const ruleTester = new RuleTester({ parserOptions: { ecmaVersion: 2022, sourceType: "module" } });
+const ruleTester = new RuleTester({ languageOptions: { ecmaVersion: 2022, sourceType: "module" } });
 
 ruleTester.run("no-restricted-exports", rule, {
     valid: [
@@ -91,6 +91,50 @@ ruleTester.run("no-restricted-exports", rule, {
         { code: "import a from 'foo';", options: [{ restrictedNamedExports: ["a"] }] },
         { code: "import { a } from 'foo';", options: [{ restrictedNamedExports: ["a"] }] },
         { code: "import { b as a } from 'foo';", options: [{ restrictedNamedExports: ["a"] }] },
+        {
+            code: "var setSomething; export { setSomething };",
+            options: [{ restrictedNamedExportsPattern: "^get" }]
+        },
+        {
+            code: "var foo, bar; export { foo, bar };",
+            options: [{ restrictedNamedExportsPattern: "^(?!foo)(?!bar).+$" }]
+        },
+        {
+            code: "var foobar; export default foobar;",
+            options: [{ restrictedNamedExportsPattern: "bar$" }]
+        },
+        {
+            code: "var foobar; export default foobar;",
+            options: [{ restrictedNamedExportsPattern: "default" }]
+        },
+        {
+            code: "export default 'default';",
+            options: [{ restrictedNamedExportsPattern: "default" }]
+        },
+        {
+            code: "var foobar; export { foobar as default };",
+            options: [{ restrictedNamedExportsPattern: "default" }]
+        },
+        {
+            code: "var foobar; export { foobar as 'default' };",
+            options: [{ restrictedNamedExportsPattern: "default" }]
+        },
+        {
+            code: "export { default } from 'mod';",
+            options: [{ restrictedNamedExportsPattern: "default" }]
+        },
+        {
+            code: "export { default as default } from 'mod';",
+            options: [{ restrictedNamedExportsPattern: "default" }]
+        },
+        {
+            code: "export { foobar as default } from 'mod';",
+            options: [{ restrictedNamedExportsPattern: "default" }]
+        },
+        {
+            code: "export * as default from 'mod';",
+            options: [{ restrictedNamedExportsPattern: "default" }]
+        },
 
         // does not check re-export all declarations
         { code: "export * from 'foo';", options: [{ restrictedNamedExports: ["a"] }] },
@@ -107,7 +151,31 @@ ruleTester.run("no-restricted-exports", rule, {
         { code: "export default 1;", options: [{ restrictedNamedExports: ["default"] }] },
 
         // "default" does not disallow re-exporting a renamed default export from another module
-        { code: "export { default as a } from 'foo';", options: [{ restrictedNamedExports: ["default"] }] }
+        { code: "export { default as a } from 'foo';", options: [{ restrictedNamedExports: ["default"] }] },
+
+        // restrictDefaultExports.direct option
+        { code: "export default foo;", options: [{ restrictDefaultExports: { direct: false } }] },
+        { code: "export default 42;", options: [{ restrictDefaultExports: { direct: false } }] },
+        { code: "export default function foo() {}", options: [{ restrictDefaultExports: { direct: false } }] },
+
+        // restrictDefaultExports.named option
+        { code: "const foo = 123;\nexport { foo as default };", options: [{ restrictDefaultExports: { named: false } }] },
+
+        // restrictDefaultExports.defaultFrom option
+        { code: "export { default } from 'mod';", options: [{ restrictDefaultExports: { defaultFrom: false } }] },
+        { code: "export { default as default } from 'mod';", options: [{ restrictDefaultExports: { defaultFrom: false } }] },
+        { code: "export { foo as default } from 'mod';", options: [{ restrictDefaultExports: { defaultFrom: true } }] },
+        { code: "export { default } from 'mod';", options: [{ restrictDefaultExports: { named: true, defaultFrom: false } }] },
+        { code: "export { 'default' } from 'mod'; ", options: [{ restrictDefaultExports: { defaultFrom: false } }] },
+
+        // restrictDefaultExports.namedFrom option
+        { code: "export { foo as default } from 'mod';", options: [{ restrictDefaultExports: { namedFrom: false } }] },
+        { code: "export { default as default } from 'mod';", options: [{ restrictDefaultExports: { namedFrom: true } }] },
+        { code: "export { default as default } from 'mod';", options: [{ restrictDefaultExports: { namedFrom: false } }] },
+        { code: "export { 'default' } from 'mod'; ", options: [{ restrictDefaultExports: { defaultFrom: false, namedFrom: true } }] },
+
+        // restrictDefaultExports.namespaceFrom option
+        { code: "export * as default from 'mod';", options: [{ restrictDefaultExports: { namespaceFrom: false } }] }
     ],
 
     invalid: [
@@ -509,6 +577,51 @@ ruleTester.run("no-restricted-exports", rule, {
             ]
         },
 
+        // restrictedNamedExportsPattern
+        {
+            code: "var getSomething; export { getSomething };",
+            options: [{ restrictedNamedExportsPattern: "get*" }],
+            errors: [
+                { messageId: "restrictedNamed", data: { name: "getSomething" }, type: "Identifier" }
+            ]
+        },
+        {
+            code: "var getSomethingFromUser; export { getSomethingFromUser };",
+            options: [{ restrictedNamedExportsPattern: "User$" }],
+            errors: [
+                { messageId: "restrictedNamed", data: { name: "getSomethingFromUser" }, type: "Identifier" }
+            ]
+        },
+        {
+            code: "var foo, ab, xy; export { foo, ab, xy };",
+            options: [{ restrictedNamedExportsPattern: "(b|y)$" }],
+            errors: [
+                { messageId: "restrictedNamed", data: { name: "ab" }, type: "Identifier" },
+                { messageId: "restrictedNamed", data: { name: "xy" }, type: "Identifier" }
+            ]
+        },
+        {
+            code: "var foo; export { foo as ab };",
+            options: [{ restrictedNamedExportsPattern: "(b|y)$" }],
+            errors: [
+                { messageId: "restrictedNamed", data: { name: "ab" }, type: "Identifier" }
+            ]
+        },
+        {
+            code: "var privateUserEmail; export { privateUserEmail };",
+            options: [{ restrictedNamedExportsPattern: "^privateUser" }],
+            errors: [
+                { messageId: "restrictedNamed", data: { name: "privateUserEmail" }, type: "Identifier" }
+            ]
+        },
+        {
+            code: "export const a = 1;",
+            options: [{ restrictedNamedExportsPattern: "^(?!foo)(?!bar).+$" }],
+            errors: [
+                { messageId: "restrictedNamed", data: { name: "a" }, type: "Identifier" }
+            ]
+        },
+
         // reports "default" in named export declarations (when configured)
         {
             code: "var a; export { a as default };",
@@ -519,6 +632,66 @@ ruleTester.run("no-restricted-exports", rule, {
             code: "export { default } from 'foo';",
             options: [{ restrictedNamedExports: ["default"] }],
             errors: [{ messageId: "restrictedNamed", data: { name: "default" }, type: "Identifier", column: 10 }]
+        },
+
+        // restrictDefaultExports.direct option
+        {
+            code: "export default foo;",
+            options: [{ restrictDefaultExports: { direct: true } }],
+            errors: [{ messageId: "restrictedDefault", type: "ExportDefaultDeclaration", column: 1 }]
+        },
+        {
+            code: "export default 42;",
+            options: [{ restrictDefaultExports: { direct: true } }],
+            errors: [{ messageId: "restrictedDefault", type: "ExportDefaultDeclaration", column: 1 }]
+        },
+        {
+            code: "export default function foo() {}",
+            options: [{ restrictDefaultExports: { direct: true } }],
+            errors: [{ messageId: "restrictedDefault", type: "ExportDefaultDeclaration", column: 1 }]
+        },
+        {
+            code: "export default foo;",
+            options: [{ restrictedNamedExports: ["bar"], restrictDefaultExports: { direct: true } }],
+            errors: [{ messageId: "restrictedDefault", type: "ExportDefaultDeclaration", column: 1 }]
+        },
+
+        // restrictDefaultExports.named option
+        {
+            code: "const foo = 123;\nexport { foo as default };",
+            options: [{ restrictDefaultExports: { named: true } }],
+            errors: [{ messageId: "restrictedDefault", type: "Identifier", line: 2, column: 17 }]
+        },
+
+        // restrictDefaultExports.defaultFrom option
+        {
+            code: "export { default } from 'mod';",
+            options: [{ restrictDefaultExports: { defaultFrom: true } }],
+            errors: [{ messageId: "restrictedDefault", type: "Identifier", line: 1, column: 10 }]
+        },
+        {
+            code: "export { default as default } from 'mod';",
+            options: [{ restrictDefaultExports: { defaultFrom: true } }],
+            errors: [{ messageId: "restrictedDefault", type: "Identifier", line: 1, column: 21 }]
+        },
+        {
+            code: "export { 'default' } from 'mod';",
+            options: [{ restrictDefaultExports: { defaultFrom: true } }],
+            errors: [{ messageId: "restrictedDefault", type: "Literal", line: 1, column: 10 }]
+        },
+
+        // restrictDefaultExports.namedFrom option
+        {
+            code: "export { foo as default } from 'mod';",
+            options: [{ restrictDefaultExports: { namedFrom: true } }],
+            errors: [{ messageId: "restrictedDefault", type: "Identifier", line: 1, column: 17 }]
+        },
+
+        // restrictDefaultExports.namespaceFrom option
+        {
+            code: "export * as default from 'mod';",
+            options: [{ restrictDefaultExports: { namespaceFrom: true } }],
+            errors: [{ messageId: "restrictedDefault", type: "Identifier", line: 1, column: 13 }]
         }
     ]
 });

@@ -22,7 +22,7 @@ Then any code used within the same scope would not get the global `undefined`, b
 
 Examples of **incorrect** code for this rule:
 
-::: incorrect
+::: incorrect { "sourceType": "script" }
 
 ```js
 /*eslint no-shadow-restricted-names: "error"*/
@@ -38,9 +38,23 @@ try {} catch(eval){}
 
 :::
 
+::: incorrect
+
+```js
+/*eslint no-shadow-restricted-names: "error"*/
+
+import NaN from "foo";
+
+import { undefined } from "bar";
+
+class Infinity {}
+```
+
+:::
+
 Examples of **correct** code for this rule:
 
-::: correct
+::: correct { "sourceType": "script" }
 
 ```js
 /*eslint no-shadow-restricted-names: "error"*/
@@ -51,6 +65,16 @@ function f(a, b){}
 
 // Exception: `undefined` may be shadowed if the variable is never assigned a value.
 var undefined;
+```
+
+:::
+
+::: correct
+
+```js
+/*eslint no-shadow-restricted-names: "error"*/
+
+import { undefined as undef } from "bar";
 ```
 
 :::

@@ -1,6 +1,7 @@
 ---
 title: no-dupe-keys
 rule_type: problem
+handled_by_typescript: true
 ---
 
 
@@ -8,7 +9,7 @@ rule_type: problem
 Multiple properties with the same key in object literals can cause unexpected behavior in your application.
 
 ```js
-var foo = {
+const foo = {
     bar: "baz",
     bar: "qux"
 };
@@ -25,17 +26,17 @@ Examples of **incorrect** code for this rule:
 ```js
 /*eslint no-dupe-keys: "error"*/
 
-var foo = {
+const foo = {
     bar: "baz",
     bar: "qux"
 };
 
-var foo = {
+const bar = {
     "bar": "baz",
     bar: "qux"
 };
 
-var foo = {
+const baz = {
     0x1: "baz",
     1: "qux"
 };
@@ -50,7 +51,7 @@ Examples of **correct** code for this rule:
 ```js
 /*eslint no-dupe-keys: "error"*/
 
-var foo = {
+const foo = {
     bar: "baz",
     quxx: "qux"
 };
