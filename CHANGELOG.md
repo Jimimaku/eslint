@@ -1,3 +1,12 @@
+v10.0.2 - February 23, 2026
+
+* [`951223b`](https://github.com/eslint/eslint/commit/951223b29669885643f7854d7c824288ba962d7e) chore: update dependency @eslint/eslintrc to ^3.3.4 (#20553) (renovate[bot])
+* [`13eeedb`](https://github.com/eslint/eslint/commit/13eeedbbd16218b0da1425b78cb284937fd964ca) docs: link rule type explanation to CLI option --fix-type (#20548) (Mike McCready)
+* [`6aa1afe`](https://github.com/eslint/eslint/commit/6aa1afe6694f3fd7f82116109a5ef2ad18ece074) chore: update dependency eslint-plugin-jsdoc to ^62.7.0 (#20536) (Milos Djermanovic)
+* [`2b72361`](https://github.com/eslint/eslint/commit/2b723616a4daeacd4605f11b4d087d4a7cae5c74) fix: update `ajv` to `6.14.0` to address security vulnerabilities (#20537) (루밀LuMir)
+* [`98cbf6b`](https://github.com/eslint/eslint/commit/98cbf6ba53a1fb2028d25078c7049a538d0e392c) docs: update migration guide per Program range change (#20534) (Huáng Jùnliàng)
+* [`61a2405`](https://github.com/eslint/eslint/commit/61a24054411fa56ce74bef554846caa9d8cb01f5) docs: add missing semicolon in vars-on-top rule example (#20533) (Abilash)
+
 v10.0.1 - February 20, 2026
 
 * [`c87d5bd`](https://github.com/eslint/eslint/commit/c87d5bded54c5cf491eb04c24c9d09bbbd42c23e) fix: update eslint (#20531) (renovate[bot])
